@@ -4,6 +4,8 @@
     height: 600px;
     border: black 2px;
     background-color: darkgreen;
+    background-image: url('Background.jpg');
+    background-size: 80% 600px;
     overflow: hidden
 }
 
@@ -37,16 +39,14 @@
     background-image: url('ball2.jpg');
     top: 80%;
     left: 50%;
-    background-size: 20px 20px;
-    /* to bring the image inside the ball) */
-    display:none;
-    /* block, I dont want to display the ball before the game start so set it to none*/
+    background-size: 20px 20px; /* to bring the image inside the ball) */
+    display:none; /* block, I dont want to display the ball before the game start so set it to none*/
     background-repeat: no-repeat;
 }
 
 .paddle {
     position: absolute;
-    background-color: yellowgreen;
+    background-color: yellow;
     height: 20px;
     width: 100px;
     bottom: 25px;
@@ -60,13 +60,13 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 91px;
+    width: 90px;
     height: 40px;
    background-color: red;
-    border: 2px solid red;
-    background-image: url('brick.jpg');
-    background-size: 91px 50px;
-    border-radius: 50px;
+    border: 1px solid rgb(9, 0, 0);
+    background-image: url('brick3.png');
+    background-size: 90px 40px;
+    /*border-radius: 50px;*/
     font-size: 1.8em;
     text-align: center;
     line-height: 10px;

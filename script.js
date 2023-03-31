@@ -1,6 +1,6 @@
 
 const container = document.querySelector('.container')
-let contDimension = container.getBoundingClientRect() //This method is used to find the container's dimension-can be used to calculate and place the bridge
+let contDimension = container.getBoundingClientRect() //This method is used to find the container's parameter-can be used to calculate and place the bricks
 console.log(contDimension)
 const gameover = document.querySelector('.gameover')
 const ball = document.querySelector('.ball')
@@ -10,24 +10,28 @@ gameover.addEventListener('click', startgame)
 container.appendChild(ball)
 container.appendChild(paddle)
 
-//key press check(left/right/up/down)
+
+
+//key press check(left/right/up/down) on paddle
 
 document.addEventListener('keydown', function (e) {
-    console.log(e.keyCode)
-    if (e.keyCode === 37) paddle.left = true
-    if (e.keyCode === 39) paddle.right = true
+    //console.log(e.keycode)
+    if (e.keycode === 37) paddle.left = true
+    if (e.keycode === 39) paddle.right = true
+    if (e.keycode === 38 && !player.inPlay) player.inPlay = true;
 
 })
 
-document.addEventListener('keyup', function (e) {
-    console.log(e.keyCode)
-    if (e.keyCode === 37) paddle.left = false
-    if (e.keyCode === 39) paddle.right = false
+document.addEventListener('keyup', function (e) { //To stop the paddle from stop going left we set this function so it can stop when the condition becomes false
+    //console.log(e.keycode)
+    if (e.keycode === 37) paddle.left = false
+    if (e.keycode === 39) paddle.right = false
 
 })
 const player = {
-    gameover: true
+    gameover: true //to prevent any default game start
 }
+
 
 
 
@@ -37,23 +41,46 @@ function startgame() {
     if (player.gameover) {
         player.gameover = false
         gameover.style.display = "none"
-        setupBricksPosition(36)
+       
         player.score = 0
         player.lives = 3
-        ball.style.display = "block"
-        scoreupdater()
-        window.requestAnimationFrame(update) // in replacement of setInterval and setTimer.requestAnimationFrame() method tells the browser to run a callback function right before the next repaint happens.
+        player.inPlay = false;
+        ball.style.display = "block";
+        ball.style.left = paddle.offsetLeft + 50 + "px";
+        ball.style.top = paddle.offsetTop - 30 + "px";
+        player.ballDir = [2, -5];
+        player.num = 60;
+        player.ballDirection = [5, 5] // in this array the vertical and the horizontal movement of the ball speed given
+        setupBricksPosition(36)
+        scoreUpdater()
+        player.ani = window.requestAnimationFrame(update) // in replacement of setInterval and setTimer.requestAnimationFrame() method tells the browser to run a callback function right before the next repaint happens.
     }
 }
 
-function scoreupdater() {
-    document.querySelector('.score').textContent=player.score
-    document.querySelector('.lives').textContent=player.lives
+var start = null
+
+function animation(timestamp) {  //below is the animation sequence 
+    if (!start)
+        start = timestamp
+    var progress = timestamp - start;
+    container.style.transform = 'translateX(' + Math.min(progress / 10, 200) + 'px)'
+    if (progress < 2000) {
+        console.log(progress)
+        window.requestAnimationFrame(animation)
+    }
+}
+window.requestAnimationFrame(animation)
+
+
+function scoreUpdater() {
+    document.querySelector('.score').textContent = player.score
+    document.querySelector('.lives').textContent = player.lives
 }
 
 function update() {
-    let paddleCPosition = paddle.offsetleft //offsetLeft property returns the left position (in pixels)
+    let paddleCPosition = paddle.offsetLeft //offsetLeft property returns the left position (in pixels)
     console.log(paddleCPosition)
+    moveBall()
     if (paddle.left) {
         paddleCPosition -= 5
     }
@@ -62,6 +89,25 @@ function update() {
     }
     paddle.style.left = paddleCPosition + 'px'
     window.requestAnimationFrame(update)
+}
+
+function moveBall() {
+    let ballPosition = {
+        x: ball.offsetLeft,
+        y: ball.offsetTop
+    }
+    if (ballPosition.x > (contDimension.width - 20) || ballPosition.x < 0) {
+        player.ballDirection[0] *= -1 //by multiplying by -1 we are flipping the ball direction from -ve direction to +ve
+    }
+    if (ballPosition.y > (contDimension.height - 20) || ballPosition.y < 0) {
+        player.ballDirection[1] *= -1
+    }
+
+    ballPosition.x += player.ballDirection[0]
+    ballPosition.y += player.ballDirection[1]
+
+    ball.style.left = ballPosition.x + 'px'
+    ball.style.top = ballPosition.y + 'px'
 }
 
 function setupBricksPosition(num) {
