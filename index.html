@@ -1,22 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BreakOut!!?</title>
-    <link rel="stylesheet" href="style.css"></link>
+    <link rel="stylesheet" href="style.css">
+    </link>
 </head>
+
 <body>
     <div>
-  Score: <span class="score">0</span>
-  Lives: <span class="lives">3</span>
-</div>
-<div class="container"></div>
-<div class="gameover">Start Game</div> 
-<div class="ball"> </div>
-<div class="paddle"></div>
+       Player 1 Score:</span><span id="p1score" class="score">0</span>
+       Player 1 Lives:</span> <span id ="p1lives" class="lives">3</span>
+    </div>
+    <div>
+        Player 2 Score:</span><span id="p2score" class="score">0</span>
+        Player 2 Lives:</span> <span id ="p2lives" class="lives">3</span>
+     </div>
+    <div class="playerselect">
+
+        <br>
+        <input type="radio" class="playradio" id="Player1"  name="Player" value="Player1">
+        <label for="Player1">Player1</label><br>
+        </br>
+        <br>
+        <input type="radio" class="playradio" id="Player2" name="Player" value="Player2">
+        <label for="Player2">Player2</label><br>
+        </br>
+    </div>
     
+    <div class="container"></div>
+    <div class="winner"></div>
+    <div class="gameover">Start Game</div>
+    <div class="ball"> </div>
+    <div class="paddle"></div>
+    
+
     <script src="script.js"></script>
 </body>
+
 </html>
