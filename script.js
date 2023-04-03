@@ -39,7 +39,7 @@ document.addEventListener('keydown', function (e) {
 
 
 //To stop the paddle from stop going left we set this function so it can stop when the condition becomes false
-document.addEventListener('keyup', function (e) { 
+document.addEventListener('keyup', function (e) {
     //console.log(e.keycode)
     if (e.keyCode === 37) paddle.left = false
     if (e.keyCode === 39) paddle.right = false
@@ -54,17 +54,17 @@ function swapPlayer(e) {
     } else {
         currentPlayer = players.player2
     }
-    
+
     gameover.innerHTML = 'Start Game'
     gameover.style.display = "block"
-   
+
 }
 
 //creating a funtion to Start game when the gameover el is clicked
 function startgame() {
     console.log('start')
-    if(currentPlayer === null){
-        alert ('Please select player')
+    if (currentPlayer === null) {
+        alert('Please select player')
         return
     }
     if (currentPlayer.gameover) {
@@ -144,11 +144,11 @@ function fallOff() {
 }
 
 function isCollide(a, b) {
-    let paddleRect = a.getBoundingClientRect();
+    let paddleOrBrick = a.getBoundingClientRect();
     let ballRect = b.getBoundingClientRect();
     console.log()
-    let horizontalCheck = (paddleRect.right < ballRect.left) || (paddleRect.left > ballRect.right)
-    let verticalCheck = (paddleRect.bottom < ballRect.top) || (paddleRect.top > ballRect.bottom)
+    let horizontalCheck = (paddleOrBrick.right < ballRect.left) || (paddleOrBrick.left > ballRect.right)
+    let verticalCheck = (paddleOrBrick.bottom < ballRect.top) || (paddleOrBrick.top > ballRect.bottom)
     return !(horizontalCheck || verticalCheck);
 }
 
@@ -156,7 +156,7 @@ function isCollide(a, b) {
 function endGame() {
     gameover.style.display = "block";
     gameover.innerHTML = "Game Over<br>Your score is " + currentPlayer.score;
-   
+
     ball.style.display = "none";
     let tempBricks = document.querySelectorAll('.brick');
     for (let tBrick of tempBricks) {
@@ -165,14 +165,14 @@ function endGame() {
     window.cancelAnimationFrame(currentPlayer.ani);
 
     console.log(players)
-    
-    if ((!players.player1.gameover && !players.player2.gameover)){
-        if(players.player1.score > players.player2.score){
-          winner.innerHTML= 'Player 1 is winner'
-        }else if(players.player2.score > players.player1.score){
-            winner.innerHTML= 'Player 2 is winner'
-        }else {
-            winner.innerHTML= 'Match Draw!'
+
+    if ((!players.player1.gameover && !players.player2.gameover)) {
+        if (players.player1.score > players.player2.score) {
+            winner.innerHTML = 'Player 1 is winner'
+        } else if (players.player2.score > players.player1.score) {
+            winner.innerHTML = 'Player 2 is winner'
+        } else {
+            winner.innerHTML = 'Match Draw!'
         }
     }
     //player.gameover = true;
@@ -206,10 +206,12 @@ function moveBall() {
         stopper();
         //setupBricksPosition(player.num);
     }
-    for (let tBrick = 0; tBrick < bricks.length; tBrick++) {
-        if (isCollide(tBrick, ball)) {
+   
+    for (let i = 0; i < bricks.length; i++) {
+        brick = bricks[i]
+        if (isCollide(brick, ball)) {
             currentPlayer.ballDir[1] *= -1;
-            tBrick.parentNode.removeChild(tBrick);
+            brick.parentNode.removeChild(brick);
             currentPlayer.score++;
             scoreUpdater();
         }
