@@ -20,7 +20,7 @@ const players = {
     }
 }
 
-let player = null
+let currentPlayer = null
 playerslections = document.querySelectorAll('input[name="Player"]')
 for (let i = 0; i < playerslections.length; i++) {
     playerslections[i].addEventListener('click', swapPlayer)
@@ -31,8 +31,8 @@ document.addEventListener('keydown', function (e) {
     console.log(e.keyCode)
     if (e.keyCode === 37) paddle.left = true
     if (e.keyCode === 39) paddle.right = true
-    if (e.keyCode === 38 && !player.inPlay) {
-        player.inPlay = true;
+    if (e.keyCode === 38 && !currentPlayer.inPlay) {
+        currentPlayer.inPlay = true;
     }
 
 })
@@ -50,9 +50,9 @@ function swapPlayer(e) {
     let selected = document.querySelector('input[name="Player"]:checked').value
     // check which player was clicked and assign player variable
     if (selected === 'Player1') {
-        player = players.player1
+        currentPlayer = players.player1
     } else {
-        player = players.player2
+        currentPlayer = players.player2
     }
     
     gameover.innerHTML = 'Start Game'
@@ -63,46 +63,45 @@ function swapPlayer(e) {
 //creating a funtion to Start game when the gameover el is clicked
 function startgame() {
     console.log('start')
-    if(player === null){
+    if(currentPlayer === null){
         alert ('Please select player')
         return
     }
-    if (player.gameover) {
-        player.selected = document.querySelector('input[name="Player"]:checked').value
-        console.log(player)
-        player.gameover = false
+    if (currentPlayer.gameover) {
+        currentPlayer.selected = document.querySelector('input[name="Player"]:checked').value
+        console.log(currentPlayer)
+        currentPlayer.gameover = false
         gameover.style.display = "none"
-        player.score = 0
-        player.lives = 3
-        player.inPlay = false;
+        currentPlayer.score = 0
+        currentPlayer.lives = 3
+        currentPlayer.inPlay = false;
         ball.style.display = "block";
         ball.style.left = paddle.offsetLeft + 50 + "px";
         ball.style.top = paddle.offsetTop - 30 + "px";
-        player.ballDir = [2, -5];// in this array the vertical and the horizontal movement of the ball speed given
-        player.num = 60;
+        currentPlayer.ballDir = [2, -5];// in this array the vertical and the horizontal movement of the ball speed given
         setupBricksPosition(36)
         scoreUpdater()
-        player.ani = window.requestAnimationFrame(update) // in replacement of setInterval and setTimer.requestAnimationFrame() method tells the browser to run a callback function right before the next repaint happens.
+        currentPlayer.ani = window.requestAnimationFrame(update) // in replacement of setInterval and setTimer.requestAnimationFrame() method tells the browser to run a callback function right before the next repaint happens.
     }
 }
 
 
 function scoreUpdater() {
 
-    if (player.selected === 'Player1') {
-        document.querySelector('#p1score').textContent = player.score
-        document.querySelector('#p1lives').textContent = player.lives
+    if (currentPlayer.selected === 'Player1') {
+        document.querySelector('#p1score').textContent = currentPlayer.score
+        document.querySelector('#p1lives').textContent = currentPlayer.lives
     }
 
-    if (player.selected === 'Player2') {
-        document.querySelector('#p2score').textContent = player.score
-        document.querySelector('#p2lives').textContent = player.lives
+    if (currentPlayer.selected === 'Player2') {
+        document.querySelector('#p2score').textContent = currentPlayer.score
+        document.querySelector('#p2lives').textContent = currentPlayer.lives
     }
 
 }
 
 function update() {
-    if (!player.gameover) {
+    if (!currentPlayer.gameover) {
         let pCurrent = paddle.offsetLeft;
         if (paddle.left && pCurrent > 0) {
             pCurrent -= 10;
@@ -112,13 +111,13 @@ function update() {
         }
 
         paddle.style.left = pCurrent + 'px';// Setting the paddle to the current position dynamically
-        if (!player.inPlay) {
+        if (!currentPlayer.inPlay) {
             waitingOnPaddle();
         }
         else {
             moveBall();
         }
-        player.ani = window.requestAnimationFrame(update);
+        currentPlayer.ani = window.requestAnimationFrame(update);
     }
 }
 
@@ -128,17 +127,17 @@ function waitingOnPaddle() {
 }
 
 function stopper() {
-    player.inPlay = false;
-    player.ballDir[0, -5];
+    currentPlayer.inPlay = false;
+    currentPlayer.ballDir[0, -5];
     waitingOnPaddle();
-    window.cancelAnimationFrame(player.ani);
+    window.cancelAnimationFrame(currentPlayer.ani);
 }
 
 function fallOff() {
-    player.lives--;
-    if (player.lives <= 0) {
+    currentPlayer.lives--;
+    if (currentPlayer.lives <= 0) {
         endGame();
-        player.lives = 0;
+        currentPlayer.lives = 0;
     }
     scoreUpdater();
     stopper();
@@ -156,14 +155,14 @@ function isCollide(a, b) {
 
 function endGame() {
     gameover.style.display = "block";
-    gameover.innerHTML = "Game Over<br>Your score is " + player.score;
+    gameover.innerHTML = "Game Over<br>Your score is " + currentPlayer.score;
    
     ball.style.display = "none";
     let tempBricks = document.querySelectorAll('.brick');
     for (let tBrick of tempBricks) {
         tBrick.parentNode.removeChild(tBrick);
     }
-    window.cancelAnimationFrame(player.ani);
+    window.cancelAnimationFrame(currentPlayer.ani);
 
     console.log(players)
     
@@ -173,7 +172,7 @@ function endGame() {
         }else if(players.player2.score > players.player1.score){
             winner.innerHTML= 'Player 2 is winner'
         }else {
-            winner.innerHTML= 'Match tie!'
+            winner.innerHTML= 'Match Draw!'
         }
     }
     //player.gameover = true;
@@ -189,35 +188,35 @@ function moveBall() {
             fallOff();
         }
         else {
-            player.ballDir[1] *= -1 //by multiplying by -1 we are flipping the ball direction from -ve direction to +ve
+            currentPlayer.ballDir[1] *= -1 //by multiplying by -1 we are flipping the ball direction from -ve direction to +ve
         }
 
     }
     if (ballPosition.x > (conDim.width - 20) || ballPosition.x < 0) {
-        player.ballDir[0] *= -1
+        currentPlayer.ballDir[0] *= -1
     }
     if (isCollide(paddle, ball)) {
         let temp = ((ballPosition.x - paddle.offsetLeft) - (paddle.offsetWidth / 2)) / 10;
         console.log('hit');
-        player.ballDir[0] = temp;
-        player.ballDir[1] *= -1;
+        currentPlayer.ballDir[0] = temp;
+        currentPlayer.ballDir[1] *= -1;
     };
     let bricks = document.querySelectorAll('.brick');
-    if (bricks.length == 0 && !player.gameover) {
+    if (bricks.length == 0 && !currentPlayer.gameover) {
         stopper();
         //setupBricksPosition(player.num);
     }
     for (let tBrick = 0; tBrick < bricks.length; tBrick++) {
         if (isCollide(tBrick, ball)) {
-            player.ballDir[1] *= -1;
+            currentPlayer.ballDir[1] *= -1;
             tBrick.parentNode.removeChild(tBrick);
-            player.score++;
+            currentPlayer.score++;
             scoreUpdater();
         }
     }
 
-    ballPosition.x += player.ballDir[0]
-    ballPosition.y += player.ballDir[1]
+    ballPosition.x += currentPlayer.ballDir[0]
+    ballPosition.y += currentPlayer.ballDir[1]
 
     ball.style.left = ballPosition.x + 'px'
     ball.style.top = ballPosition.y + 'px'
