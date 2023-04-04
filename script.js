@@ -1,7 +1,7 @@
 
 const container = document.querySelector('.container')
-let conDim = container.getBoundingClientRect() //This method is used to find the container's parameter,can be used to calculate and place the bricks inside the container
-console.log(conDim)
+let contDimension = container.getBoundingClientRect() //This method is used to find the container's parameter,can be used to calculate and place the bricks inside the container
+console.log(contDimension)
 const gameover = document.querySelector('.gameover')
 const winner = document.querySelector('.winner')
 const ball = document.querySelector('.ball')
@@ -26,7 +26,7 @@ for (let i = 0; i < playerslections.length; i++) {
     playerslections[i].addEventListener('click', swapPlayer)
 }
 
-//key press check(left/right/up/down) on paddle
+//key press check(left/right/up/down) to move the paddle
 document.addEventListener('keydown', function (e) {
     console.log(e.keyCode)
     if (e.keyCode === 37) paddle.left = true
@@ -38,7 +38,7 @@ document.addEventListener('keydown', function (e) {
 })
 
 
-//To stop the paddle from stop going left we set this function so it can stop when the condition becomes false
+//To stop the paddle from stop going left,right we set this function so it can stop when we stop pressing the key
 document.addEventListener('keyup', function (e) {
     //console.log(e.keycode)
     if (e.keyCode === 37) paddle.left = false
@@ -46,10 +46,11 @@ document.addEventListener('keyup', function (e) {
 
 })
 
-function swapPlayer(e) {
-    let selected = document.querySelector('input[name="Player"]:checked').value
+function swapPlayer(e) {  //This function is to assign the selected player as current player to start the game
+    let selectedPlayer = document.querySelector('input[name="Player"]:checked').value
+
     // check which player was clicked and assign player variable
-    if (selected === 'Player1') {
+    if (selectedPlayer === 'Player1') {
         currentPlayer = players.player1
     } else {
         currentPlayer = players.player2
@@ -76,7 +77,7 @@ function startgame() {
         currentPlayer.lives = 3
         currentPlayer.inPlay = false;
         ball.style.display = "block";
-        ball.style.left = paddle.offsetLeft + 50 + "px";
+        ball.style.left = paddle.offsetLeft + 50 + "px"; //setting default top and left position for the ball on the paddle
         ball.style.top = paddle.offsetTop - 30 + "px";
         currentPlayer.ballDir = [2, -5];// in this array the vertical and the horizontal movement of the ball speed given
         setupBricksPosition(36)
@@ -86,7 +87,7 @@ function startgame() {
 }
 
 
-function scoreUpdater() {
+function scoreUpdater() { //This block is to update the score of the current player
 
     if (currentPlayer.selected === 'Player1') {
         document.querySelector('#p1score').textContent = currentPlayer.score
@@ -101,13 +102,13 @@ function scoreUpdater() {
 }
 
 function update() {
-    if (!currentPlayer.gameover) {
+    if (!currentPlayer.gameover) {  //if current player is still playing
         let pCurrent = paddle.offsetLeft;
-        if (paddle.left && pCurrent > 0) {
-            pCurrent -= 10;
+        if (paddle.left && pCurrent > 0) {   //if paddle moving toward left and offset left if >0 
+            pCurrent -= 10; //then 10 px reduced continuously to move toward the left side
         }
-        if (paddle.right && (pCurrent < (conDim.width - paddle.offsetWidth))) {
-            pCurrent += 10;
+        if (paddle.right && (pCurrent < (contDimension.width - paddle.offsetWidth))) { //if paddle is in the right direction and the left of 
+            pCurrent += 10; //then 10 px increased to move towards the rightside
         }
 
         paddle.style.left = pCurrent + 'px';// Setting the paddle to the current position dynamically
@@ -117,38 +118,39 @@ function update() {
         else {
             moveBall();
         }
-        currentPlayer.ani = window.requestAnimationFrame(update);
+        // method tells the browser that you wish to perform an animation and requests that the browser call a specified function to update an animation before the next repaint.
+        currentPlayer.ani = window.requestAnimationFrame(update); 
     }
 }
 
-function waitingOnPaddle() {
+function waitingOnPaddle() {  //ball's default position before when not in play
     ball.style.top = (paddle.offsetTop - 22) + 'px';
     ball.style.left = (paddle.offsetLeft + 40) + 'px';
 }
 
 function stopper() {
-    currentPlayer.inPlay = false;
-    currentPlayer.ballDir[0, -5];
-    waitingOnPaddle();
-    window.cancelAnimationFrame(currentPlayer.ani);
+    currentPlayer.inPlay = false; //if the player is not playing
+    currentPlayer.ballDir[0, -5]; //Then ball direction set to a default value to go back to the paddle
+    waitingOnPaddle(); 
+    window.cancelAnimationFrame(currentPlayer.ani); //method cancels an animation frame request previously scheduled through a call to window.requestAnimationFrame().
 }
 
-function fallOff() {
+function fallOff() { //if the ball fall off then the currentplayer's live reduced by 1
     currentPlayer.lives--;
-    if (currentPlayer.lives <= 0) {
-        endGame();
+    if (currentPlayer.lives <= 0) { //if the current player's life <=0 then it calls the endgame function
+        endGame(); 
         currentPlayer.lives = 0;
     }
-    scoreUpdater();
-    stopper();
+    scoreUpdater(); //updates the score
+    stopper(); //stops the game
 }
 
-function isCollide(a, b) {
-    let paddleOrBrick = a.getBoundingClientRect();
-    let ballRect = b.getBoundingClientRect();
+function isCollide(a, b) { //To check if the ball touches the brick or the paddle
+    let paddleOrBrick = a.getBoundingClientRect(); // getting the dimension of the paddle
+    let ballRect = b.getBoundingClientRect();  //getting the dimension of the ball
     console.log()
-    let horizontalCheck = (paddleOrBrick.right < ballRect.left) || (paddleOrBrick.left > ballRect.right)
-    let verticalCheck = (paddleOrBrick.bottom < ballRect.top) || (paddleOrBrick.top > ballRect.bottom)
+    let horizontalCheck = (paddleOrBrick.right < ballRect.left) || (paddleOrBrick.left > ballRect.right)// checks horizontal collision
+    let verticalCheck = (paddleOrBrick.bottom < ballRect.top) || (paddleOrBrick.top > ballRect.bottom) //chacks for vertical collision
     return !(horizontalCheck || verticalCheck);
 }
 
@@ -162,11 +164,11 @@ function endGame() {
     for (let tBrick of tempBricks) {
         tBrick.parentNode.removeChild(tBrick);
     }
-    window.cancelAnimationFrame(currentPlayer.ani);
+    window.cancelAnimationFrame(currentPlayer.ani); //method cancels an animation frame request previously scheduled through a call to window.requestAnimationFrame().
 
     console.log(players)
 
-    if ((!players.player1.gameover && !players.player2.gameover)) {
+    if ((!players.player1.gameover && !players.player2.gameover)) {  //comparing both the players scores to finalise the winner
         if (players.player1.score > players.player2.score) {
             winner.innerHTML = 'Player 1 is winner'
         } else if (players.player2.score > players.player1.score) {
@@ -178,21 +180,21 @@ function endGame() {
     //player.gameover = true;
 }
 
-function moveBall() {
+function moveBall() { 
     let ballPosition = {
         x: ball.offsetLeft,
         y: ball.offsetTop
     }
-    if (ballPosition.y > (conDim.height - 20) || ballPosition.y < 0) {
-        if (ballPosition.y > (conDim.height - 20)) {
+    if (ballPosition.y > (contDimension.height - 20) || ballPosition.y < 0) { //checking the ball's y position if it past beyons the container's height or
+        if (ballPosition.y > (contDimension.height - 20)) { //if it go beyond the container's height then call falloff function
             fallOff();
         }
         else {
-            currentPlayer.ballDir[1] *= -1 //by multiplying by -1 we are flipping the ball direction from -ve direction to +ve
+            currentPlayer.ballDir[1] *= -1 //else change the direction by multiplying by -1 we are flipping the ball direction from -ve direction to +ve
         }
 
     }
-    if (ballPosition.x > (conDim.width - 20) || ballPosition.x < 0) {
+    if (ballPosition.x > (contDimension.width - 20) || ballPosition.x < 0) {  //Same thing checked here for the x position
         currentPlayer.ballDir[0] *= -1
     }
     if (isCollide(paddle, ball)) {
@@ -202,22 +204,22 @@ function moveBall() {
         currentPlayer.ballDir[1] *= -1;
     };
     let bricks = document.querySelectorAll('.brick');
-    if (bricks.length == 0 && !currentPlayer.gameover) {
+    if (bricks.length == 0 && !currentPlayer.gameover) { //checking if no bricks left and game is not over,calling gthe stopper
         stopper();
         //setupBricksPosition(player.num);
     }
    
-    for (let i = 0; i < bricks.length; i++) {
+    for (let i = 0; i < bricks.length; i++) { //This block is to check the brick and ball collision and two remove a brick
         brick = bricks[i]
         if (isCollide(brick, ball)) {
-            currentPlayer.ballDir[1] *= -1;
+            currentPlayer.ballDir[1] *= -1;   //and to change the direction of the ball after it hit the brick
             brick.parentNode.removeChild(brick);
             currentPlayer.score++;
-            scoreUpdater();
+            scoreUpdater(); //here also score updater called to updated the score as the ball breaks the bricks
         }
     }
 
-    ballPosition.x += currentPlayer.ballDir[0]
+    ballPosition.x += currentPlayer.ballDir[0] //Here ball's current left and top position updated dynamically
     ballPosition.y += currentPlayer.ballDir[1]
 
     ball.style.left = ballPosition.x + 'px'
@@ -226,22 +228,22 @@ function moveBall() {
 
 function setupBricksPosition(num) {
     let row = {
-        x: ((conDim.width % 100) / 2), //this is used to find the remaining space on the left and right side of the container,here each brick width is 100
+        x: ((contDimension.width % 100) / 2), //this is used to find the remaining space on the left and right side of the container,here each brick width is 100
         y: 50
     }
     let skip = false
     for (let x = 0; x < num; x++) {
         console.log(row)
-        if (row.x > (conDim.width - 100)) { // we are subtracting the container length by 100 to accomodate the bricks
-            row.y += 50  //if its greater then we are incrementing the y by 50 so they can start a new row
-            if (row.y > (conDim.height / 2)) {
-                skip = true
+        if (row.x > (contDimension.width - 100)) { // we are subtracting the container length by 100 to accomodate the bricks
+            row.y += 50  //if the previous row is filled then we are incrementing the y by 50 so they can start a new row
+            if (row.y > (contDimension.height / 2)) { //Giving the flexibility to accomodate bricks only for half the height of the container
+                skip = true                           //So there will be remaining half the height for the ball to move
             }
-            row.x = ((conDim.width % 100) / 2) //for x we are setting the same position as before 
+            row.x = ((contDimension.width % 100) / 2) //for x we are setting the same position as before 
         }
         row.count = x
-        if (!skip) {
-            makeBricks(row)
+        if (!skip) { //If the height is not half of the container then make bricks.
+            makeBricks(row) 
         }
         row.x += 100    //adding 100 as we set the width of each px as 100
     }
