@@ -21,7 +21,7 @@ const players = {
 }
 
 let currentPlayer = null
-playerslections = document.querySelectorAll('input[name="Player"]')
+playerslections = document.querySelectorAll('input[name="Player"]')// Get the radio button input elements
 for (let i = 0; i < playerslections.length; i++) {
     playerslections[i].addEventListener('click', swapPlayer)
 }
@@ -48,7 +48,7 @@ document.addEventListener('keyup', function (e) {
 
 function swapPlayer(e) {  //This function is to assign the selected player as current player to start the game
     let selectedPlayer = document.querySelector('input[name="Player"]:checked').value
-
+    console.log('selected player :' + selectedPlayer)
     // check which player was clicked and assign player variable
     if (selectedPlayer === 'Player1') {
         currentPlayer = players.player1
@@ -62,20 +62,19 @@ function swapPlayer(e) {  //This function is to assign the selected player as cu
 }
 
 //creating a funtion to Start game when the gameover el is clicked
-function startgame() {
+function startgame() { //This function will be invoked when user clicks the Start banner
     console.log('start')
     if (currentPlayer === null) {
         alert('Please select player')
         return
     }
     if (currentPlayer.gameover) {
-        currentPlayer.selected = document.querySelector('input[name="Player"]:checked').value
         console.log(currentPlayer)
         currentPlayer.gameover = false
         gameover.style.display = "none"
         currentPlayer.score = 0
         currentPlayer.lives = 3
-        currentPlayer.inPlay = false;
+        currentPlayer.inPlay = false;//This value will set to false by default,when user click up arrow it change to true
         ball.style.display = "block";
         ball.style.left = paddle.offsetLeft + 50 + "px"; //setting default top and left position for the ball on the paddle
         ball.style.top = paddle.offsetTop - 30 + "px";
@@ -111,7 +110,7 @@ function update() {
             pCurrent += 10; //then 10 px increased to move towards the rightside
         }
 
-        paddle.style.left = pCurrent + 'px';// Setting the paddle to the current position dynamically
+        paddle.style.left = pCurrent + 'px';// We are Setting the paddle movement
         if (!currentPlayer.inPlay) {
             waitingOnPaddle();
         }
@@ -119,7 +118,7 @@ function update() {
             moveBall();
         }
         // method tells the browser that you wish to perform an animation and requests that the browser call a specified function to update an animation before the next repaint.
-        currentPlayer.ani = window.requestAnimationFrame(update); 
+        currentPlayer.ani = window.requestAnimationFrame(update);
     }
 }
 
@@ -131,14 +130,14 @@ function waitingOnPaddle() {  //ball's default position before when not in play
 function stopper() {
     currentPlayer.inPlay = false; //if the player is not playing
     currentPlayer.ballDir[0, -5]; //Then ball direction set to a default value to go back to the paddle
-    waitingOnPaddle(); 
+    waitingOnPaddle();
     window.cancelAnimationFrame(currentPlayer.ani); //method cancels an animation frame request previously scheduled through a call to window.requestAnimationFrame().
 }
 
 function fallOff() { //if the ball fall off then the currentplayer's live reduced by 1
     currentPlayer.lives--;
     if (currentPlayer.lives <= 0) { //if the current player's life <=0 then it calls the endgame function
-        endGame(); 
+        endGame();
         currentPlayer.lives = 0;
     }
     scoreUpdater(); //updates the score
@@ -151,7 +150,7 @@ function isCollide(a, b) { //To check if the ball touches the brick or the paddl
     console.log()
     let horizontalCheck = (paddleOrBrick.right < ballRect.left) || (paddleOrBrick.left > ballRect.right)// checks horizontal collision
     let verticalCheck = (paddleOrBrick.bottom < ballRect.top) || (paddleOrBrick.top > ballRect.bottom) //chacks for vertical collision
-    return !(horizontalCheck || verticalCheck);
+    return !(horizontalCheck || verticalCheck);//If both vertical and horizontal check is false then it is consider as collide
 }
 
 
@@ -180,7 +179,7 @@ function endGame() {
     //player.gameover = true;
 }
 
-function moveBall() { 
+function moveBall() {
     let ballPosition = {
         x: ball.offsetLeft,
         y: ball.offsetTop
@@ -197,8 +196,8 @@ function moveBall() {
     if (ballPosition.x > (contDimension.width - 20) || ballPosition.x < 0) {  //Same thing checked here for the x position
         currentPlayer.ballDir[0] *= -1
     }
-    if (isCollide(paddle, ball)) {
-        let temp = ((ballPosition.x - paddle.offsetLeft) - (paddle.offsetWidth / 2)) / 10;
+    if (isCollide(paddle, ball)) { // Check paddle and ball collide
+        let temp = ((ballPosition.x - paddle.offsetLeft) - (paddle.offsetWidth / 2)) / 10;//To get the approx x position adter collide
         console.log('hit');
         currentPlayer.ballDir[0] = temp;
         currentPlayer.ballDir[1] *= -1;
@@ -208,10 +207,10 @@ function moveBall() {
         stopper();
         //setupBricksPosition(player.num);
     }
-   
+
     for (let i = 0; i < bricks.length; i++) { //This block is to check the brick and ball collision and two remove a brick
         brick = bricks[i]
-        if (isCollide(brick, ball)) {
+        if (isCollide(brick, ball)) { // Check brick and ball collide
             currentPlayer.ballDir[1] *= -1;   //and to change the direction of the ball after it hit the brick
             brick.parentNode.removeChild(brick);
             currentPlayer.score++;
@@ -233,7 +232,9 @@ function setupBricksPosition(num) {
     }
     let skip = false
     for (let x = 0; x < num; x++) {
+        console.log('Start row')
         console.log(row)
+        console.log('End row')
         if (row.x > (contDimension.width - 100)) { // we are subtracting the container length by 100 to accomodate the bricks
             row.y += 50  //if the previous row is filled then we are incrementing the y by 50 so they can start a new row
             if (row.y > (contDimension.height / 2)) { //Giving the flexibility to accomodate bricks only for half the height of the container
@@ -241,9 +242,9 @@ function setupBricksPosition(num) {
             }
             row.x = ((contDimension.width % 100) / 2) //for x we are setting the same position as before 
         }
-        row.count = x
+     
         if (!skip) { //If the height is not half of the container then make bricks.
-            makeBricks(row) 
+            makeBricks(row)
         }
         row.x += 100    //adding 100 as we set the width of each px as 100
     }
