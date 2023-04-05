@@ -55,7 +55,7 @@ function swapPlayer(e) {  //This function is to assign the selected player as cu
     } else {
         currentPlayer = players.player2
     }
-
+    currentPlayer.selected = selectedPlayer
     gameover.innerHTML = 'Start Game'
     gameover.style.display = "block"
 
@@ -79,7 +79,7 @@ function startgame() { //This function will be invoked when user clicks the Star
         ball.style.left = paddle.offsetLeft + 50 + "px"; //setting default top and left position for the ball on the paddle
         ball.style.top = paddle.offsetTop - 30 + "px";
         currentPlayer.ballDir = [2, -5];// in this array the vertical and the horizontal movement of the ball speed given
-        setupBricksPosition(36)
+        setupBricksPosition(60)
         scoreUpdater()
         currentPlayer.ani = window.requestAnimationFrame(update) // in replacement of setInterval and setTimer.requestAnimationFrame() method tells the browser to run a callback function right before the next repaint happens.
     }
@@ -117,7 +117,7 @@ function update() {
         else {
             moveBall();
         }
-        // method tells the browser that you wish to perform an animation and requests that the browser call a specified function to update an animation before the next repaint.
+        // method tells the browser that you want an animation and requests that the browser call a specified function to update an animation before the next repaint.
         currentPlayer.ani = window.requestAnimationFrame(update);
     }
 }
